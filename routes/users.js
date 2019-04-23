@@ -67,7 +67,8 @@ router.post("/login", async (ctx, next) => {
       msg: "登录成功",
       loginMsg: {
         user: res.user,
-        type: res.type
+        type: res.type,
+        _id: res._id
       }
     }
     ctx.cookies.set("userId", res._id);
@@ -84,12 +85,24 @@ router.post("/addInfo", async (ctx) => {
   } else {
     const data = ctx.request.body;
     let res = await User.findOneAndUpdate({_id: userId}, data);
-    ctx.body = {
-      code: 1,
-      msg: Object.assign({},{
-        user: res.user,
-        type: res.type
-      }, data)
+    let res1;
+    if(res) {
+      res1 = await User.findOneAndUpdate({_id: userId}, {isUpdate: true});
+      ctx.body = {
+        code: 1,
+        msg: Object.assign({},{
+          user: res1.user,
+          type: res1.type
+        }, data)
+      }
+    } else {
+      ctx.body = {
+        code: 1,
+        msg: Object.assign({},{
+          user: res.user,
+          type: res.type
+        }, data)
+      }
     }
   }
 })
@@ -103,4 +116,19 @@ router.post("/bossList", async (ctx) => {
   }
 })
 
+router.post("/infoUpdated", async (ctx) => {
+  const userId = ctx.cookies.get("userId");
+  if (!userId) {
+    ctx.body = {
+      code: 0,
+      msg: "请先登录"
+    }
+  } else {
+    let res = await User.findOne({_id: userId});
+    ctx.body = {
+      code: 1,
+      data: res
+    }
+  }
+})
 module.exports = router;

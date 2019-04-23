@@ -9,7 +9,8 @@ let userSchema = new mongoose.Schema({
   "title": String,
   "company": String,
   "money": String,
-  "selectIcon": String
+  "selectIcon": String,
+  "isUpdate": Boolean
 });
 
 module.exports = mongoose.model("User", userSchema);
