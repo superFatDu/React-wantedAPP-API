@@ -4,14 +4,25 @@ const User = require("../dbs/models/User.js");
 router.prefix('/user')
 
 router.get('/getUserInfo', async (ctx, next) => {
-  let res = await User.find((err, doc) => {
-    if (err) {
-      return err
-    } else {
-      return doc;
+  const userId = ctx.cookies.get("userId");
+  if (!userId) {
+    ctx.body = {
+      code: 1,
+      msg: "用户没有登录"
     }
-  });
-  ctx.body = res;
+  }
+  let res = await User.findOne({_id: userId});
+  if (!res) {
+    ctx.body = {
+      code: 1,
+      msg: "后端出错了"
+    }
+  } else {
+    ctx.body = {
+      code: 0,
+      msg: res
+    }
+  }
 })
 
 router.post('/regInfo', async (ctx, next) => {
@@ -59,6 +70,7 @@ router.post("/login", async (ctx, next) => {
         type: res.type
       }
     }
+    ctx.cookies.set("userId", res._id);
   }
 })
 
