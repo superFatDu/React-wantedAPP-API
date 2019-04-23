@@ -8,7 +8,8 @@ let userSchema = new mongoose.Schema({
   "desc": {type: String},
   "title": String,
   "company": String,
-  "money": String
+  "money": String,
+  "selectIcon": String
 });
 
 module.exports = mongoose.model("User", userSchema);

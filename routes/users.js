@@ -74,4 +74,33 @@ router.post("/login", async (ctx, next) => {
   }
 })
 
+router.post("/addInfo", async (ctx) => {
+  const userId = ctx.cookies.get("userId");
+  if (!userId) {
+    ctx.body = {
+      code: 1,
+      msg: "请先登录"
+    }
+  } else {
+    const data = ctx.request.body;
+    let res = await User.findOneAndUpdate({_id: userId}, data);
+    ctx.body = {
+      code: 1,
+      msg: Object.assign({},{
+        user: res.user,
+        type: res.type
+      }, data)
+    }
+  }
+})
+
+router.post("/bossList", async (ctx) => {
+  const {type} = ctx.request.body;
+  let res = await User.find({type});
+  ctx.body = {
+    code: 0,
+    data: res
+  }
+})
+
 module.exports = router;
