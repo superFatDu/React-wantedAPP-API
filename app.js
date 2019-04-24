@@ -8,6 +8,7 @@ const logger = require('koa-logger')
 
 const index = require('./routes/index')
 const users = require('./routes/users')
+const chats = require("./routes/chats")
 
 const mongoose = require("mongoose");
 const dbConfig = require("./dbs/config.js");
@@ -38,6 +39,7 @@ app.use(async (ctx, next) => {
 // routes
 app.use(index.routes(), index.allowedMethods())
 app.use(users.routes(), users.allowedMethods())
+app.use(chats.routes(), chats.allowedMethods())
 
 // error-handling
 app.on('error', (err, ctx) => {
@@ -50,5 +52,23 @@ mongoose.connect(dbConfig.dbs, {
 }, () => {
   console.log("success");
 });
+
+
+// socket io
+const server = require('http').Server(app.callback());
+const io = require('socket.io')(server);
+const port = 8081;
+
+server.listen(process.env.PORT || port, () => {
+     console.log(`app run at : http://127.0.0.1:${port}`);
+})
+
+io.on('connection', socket => {
+  console.log('初始化成功！下面可以用socket绑定事件和触发事件了');
+  socket.on('sendMsg', data => {
+    console.log(data);
+    io.emit('getMsg', '我是返回的消息... ...');
+  })
+})
 
 module.exports = app
