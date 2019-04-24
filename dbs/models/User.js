@@ -10,7 +10,7 @@ let userSchema = new mongoose.Schema({
   "company": String,
   "money": String,
   "selectIcon": String,
-  "isUpdate": Boolean
+  "updateTime": String
 });
 
 module.exports = mongoose.model("User", userSchema);

@@ -65,11 +65,7 @@ router.post("/login", async (ctx, next) => {
     ctx.body = {
       code: 0, 
       msg: "登录成功",
-      loginMsg: {
-        user: res.user,
-        type: res.type,
-        _id: res._id
-      }
+      loginMsg: res
     }
     ctx.cookies.set("userId", res._id);
   }
@@ -87,7 +83,8 @@ router.post("/addInfo", async (ctx) => {
     let res = await User.findOneAndUpdate({_id: userId}, data);
     let res1;
     if(res) {
-      res1 = await User.findOneAndUpdate({_id: userId}, {isUpdate: true});
+      let updateTime = (new Date().getFullYear())+'-'+(new Date().getMonth() + 1)+'-'+(new Date().getDate());
+      res1 = await User.findOneAndUpdate({_id: userId}, {updateTime});
       ctx.body = {
         code: 1,
         msg: Object.assign({},{
