@@ -3,9 +3,9 @@ const Chat = require("../dbs/models/Chat.js");
 
 router.prefix('/chat');
 
-router.get("/init", async (ctx) => {
-  const userId = ctx.cookies.get("userId");
-  let res = await Chat.find({chat_id: userId});
+router.post("/init", async (ctx) => {
+  const {chat_id} = ctx.request.body;
+  let res = await Chat.find({chat_id});
   ctx.body = {
     code: 0,
     msg: res

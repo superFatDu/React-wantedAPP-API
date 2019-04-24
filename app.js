@@ -13,6 +13,8 @@ const chats = require("./routes/chats")
 const mongoose = require("mongoose");
 const dbConfig = require("./dbs/config.js");
 
+const chatModel = require("./dbs/models/Chat")
+
 // error handler
 onerror(app)
 
@@ -64,10 +66,14 @@ server.listen(process.env.PORT || port, () => {
 })
 
 io.on('connection', socket => {
-  console.log('初始化成功！下面可以用socket绑定事件和触发事件了');
-  socket.on('sendMsg', data => {
-    console.log(data);
-    io.emit('getMsg', '我是返回的消息... ...');
+  console.log('socket初始化成功！');
+  socket.on('sendMsg', async (data) => {
+    const {from, to, msg} = data;
+    const chat_id = [from, to].sort().join('_');
+    let res = await chatModel.create({chat_id, from, to, content: msg});
+    if (res) {
+      io.emit('recvMsg', Object.assign({}, res._doc));
+    }
   })
 })
 
