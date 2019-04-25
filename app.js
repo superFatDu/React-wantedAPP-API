@@ -70,7 +70,7 @@ io.on('connection', socket => {
   socket.on('sendMsg', async (data) => {
     const {from, to, msg} = data;
     const chat_id = [from, to].sort().join('_');
-    let res = await chatModel.create({chat_id, from, to, content: msg});
+    let res = await chatModel.create({chat_id, from, to, content: msg, create_time: new Date().getTime()});
     if (res) {
       io.emit('recvMsg', Object.assign({}, res._doc));
     }
